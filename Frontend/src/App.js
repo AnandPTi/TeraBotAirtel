@@ -23,6 +23,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message }),
+        withCredentials: true
       });
 
       const data = await response.json();

@@ -10,7 +10,7 @@ app = FastAPI()
 # CORS settings for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://tera-bot-airtel-virid.vercel.app"],  # Frontend URL
+    allow_origins=["https://tera-bot-airtel-virid.vercel.app"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers (Authorization, etc.)
