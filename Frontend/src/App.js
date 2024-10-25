@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import './App.css';
-import Card from './Card';
+import React, { useState, useRef, useEffect } from 'react';
 
-function App() {
+
+const App = () => {
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [isMessageSent, setIsMessageSent] = useState(false);
+  const chatContainerRef = useRef(null);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleSendMessage = async () => {
     if (!message) return;
@@ -16,8 +23,7 @@ function App() {
     ]);
 
     try {
-      // const response = await fetch('https://terabotairtel.onrender.com/chat', {
-        const response = await fetch('https://terabotairtel.onrender.com/chat', {
+      const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,7 +46,6 @@ function App() {
       ]);
     }
 
-
     setMessage('');
     setIsMessageSent(true);
   };
@@ -52,65 +57,232 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <h1>TeraBot Airtel</h1>
-        <div className="status">
-          <span className="dot"></span>
-        </div>
-      </header>
-
-      {!isMessageSent && (
-        <div className="card-grid">
-          <Card
-            title="Get quick answers to common questions"
-            description="Instantly get answers to common questions with fast, accurate responses, saving you time and effort."
-          />
-          <Card
-            title="Participate in everyday conversations"
-            description="Engage effortlessly in everyday conversations, enjoying smooth interactions like talking to a real person."
-          />
-          <Card
-            title="Easily request a Sim Swap"
-            description="The chatbot allows you to easily request a sim swap and fill up a form without leaving the chat."
-          />
-          <Card
-            title="Start a Conversation"
-            description="Begin chatting and let the assistant guide you through any query you have."
-          />
-        </div>
-      )}
-
-      <div className="chatbox">
-        <div className="messages">
-          {chatHistory.map((chat, index) => (
-            <div key={index} className={`message-box ${chat.sender.toLowerCase()}`}>
-              <p>
-                <strong>{chat.sender}:</strong> {chat.text}
-              </p>
+    <div className="min-h-screen bg-gray-900 flex flex-col">
+      {/* Fixed Header */}
+      <div className="bg-gray-900 fixed top-0 left-0 right-0 z-10 p-4 border-b border-gray-800">
+        <div className="max-w-4xl mx-auto flex items-center gap-2">
+          <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+            <span className="text-xl">⚡</span>
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold text-white">TeraBot Airtel</h1>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-400">Online</span>
             </div>
-          ))}
+          </div>
         </div>
+      </div>
 
-        <footer className="footer">
-          <input
-            type="text"
-            placeholder="Enter message here..."
-            className="message-input"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress} 
-          />
-          <button className="send-button" onClick={handleSendMessage}>
-            ➤
-          </button>
-        </footer>
+      {/* Main Content with Padding for Header and Input */}
+      <div className="flex-1 pt-24 pb-20">
+        <div className="max-w-4xl mx-auto">
+          {!isMessageSent ? (
+            <div className="grid md:grid-cols-2 gap-4 p-4">
+              {/* Feature Cards */}
+              {[
+                {
+                  icon: "💡",
+                  title: "Get quick answers to common telecomm questions",
+                  description: "Instantly get answers to common telecomm or related questions with fast, accurate responses, saving you time and effort."
+                },
+                {
+                  icon: "🗣️",
+                  title: "Participate in everyday conversations Regarding Airtel and it's services",
+                  description: "Engage effortlessly in everyday conversations about AIrtel, enjoying natural and smooth interactions that feel just like talking to a real person."
+                },
+                {
+                  icon: "📱",
+                  title: "Easily request a Sim Swap",
+                  description: "The chatbot allows you to easily request a sim swap and fill up a form all without leaving the chat."
+                }
+              ].map((feature, index) => (
+                <div key={index} className="bg-gray-800 rounded-lg p-6">
+                  <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <span className="text-xl">{feature.icon}</span>
+                  </div>
+                  <h2 className="text-xl font-semibold mb-2 text-white">{feature.title}</h2>
+                  <p className="text-gray-400 text-sm">{feature.description}</p>
+                </div>
+              ))}
+              <div className="bg-gray-800 rounded-lg p-6 flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-white">Start a Conversation.</h2>
+                <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-xl">➜</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div 
+              ref={chatContainerRef}
+              className="space-y-4 p-4 overflow-y-auto"
+              style={{ maxHeight: 'calc(100vh - 180px)' }}
+            >
+              {chatHistory.map((chat, index) => (
+                <div
+                  key={index}
+                  className={`flex ${chat.sender === 'You' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`rounded-lg p-3 max-w-[80%] ${
+                      chat.sender === 'You' 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-gray-800 text-white'
+                    }`}
+                  >
+                    <p className="text-sm">{chat.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Fixed Input Area */}
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Enter message here..."
+              className="w-full bg-gray-800 text-white rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-purple-600"
+            />
+            <button
+              onClick={handleSendMessage}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center"
+            >
+              <span>➜</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default App;
+
+// import React, { useState } from 'react';
+// import './App.css';
+// import Card from './Card';
+
+// function App() {
+//   const [message, setMessage] = useState('');
+//   const [chatHistory, setChatHistory] = useState([]);
+//   const [isMessageSent, setIsMessageSent] = useState(false);
+
+//   const handleSendMessage = async () => {
+//     if (!message) return;
+
+//     setChatHistory((prevHistory) => [
+//       ...prevHistory,
+//       { sender: 'You', text: message },
+//     ]);
+
+//     try {
+//       // const response = await fetch('https://terabotairtel.onrender.com/chat', {
+//         const response = await fetch('https://terabotairtel.onrender.com/chat', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ message }),
+//         withCredentials: true
+//       });
+
+//       const data = await response.json();
+
+//       setChatHistory((prevHistory) => [
+//         ...prevHistory,
+//         { sender: 'Bot', text: data.response },
+//       ]);
+//     } catch (error) {
+//       console.error('Error sending message:', error);
+//       setChatHistory((prevHistory) => [
+//         ...prevHistory,
+//         { sender: 'Bot', text: 'Sorry, something went wrong.' },
+//       ]);
+//     }
+
+
+//     setMessage('');
+//     setIsMessageSent(true);
+//   };
+
+//   const handleKeyPress = (e) => {
+//     if (e.key === 'Enter') {
+//       handleSendMessage();
+//     }
+//   };
+
+//   return (
+//     <div className="app-container">
+//       <header className="header">
+//         <h1>TeraBot Airtel</h1>
+//         <div className="status">
+//           <span className="dot"></span>
+//         </div>
+//       </header>
+
+//       {!isMessageSent && (
+//         <div className="card-grid">
+//           <Card
+//             title="Get quick answers to common questions"
+//             description="Instantly get answers to common questions with fast, accurate responses, saving you time and effort."
+//           />
+//           <Card
+//             title="Participate in everyday conversations"
+//             description="Engage effortlessly in everyday conversations, enjoying smooth interactions like talking to a real person."
+//           />
+//           <Card
+//             title="Easily request a Sim Swap"
+//             description="The chatbot allows you to easily request a sim swap and fill up a form without leaving the chat."
+//           />
+//           <Card
+//             title="Start a Conversation"
+//             description="Begin chatting and let the assistant guide you through any query you have."
+//           />
+//         </div>
+//       )}
+
+//       <div className="chatbox">
+//         <div className="messages">
+//           {chatHistory.map((chat, index) => (
+//             <div key={index} className={`message-box ${chat.sender.toLowerCase()}`}>
+//               <p>
+//                 <strong>{chat.sender}:</strong> {chat.text}
+//               </p>
+//             </div>
+//           ))}
+//         </div>
+
+//         <footer className="footer">
+//           <input
+//             type="text"
+//             placeholder="Enter message here..."
+//             className="message-input"
+//             value={message}
+//             onChange={(e) => setMessage(e.target.value)}
+//             onKeyPress={handleKeyPress} 
+//           />
+//           <button className="send-button" onClick={handleSendMessage}>
+//             ➤
+//           </button>
+//         </footer>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+
+
+
 
 
 // import React, { useState } from 'react';
