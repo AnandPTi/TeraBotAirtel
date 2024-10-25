@@ -6,11 +6,9 @@ TeraBot Airtel is an intelligent chatbot application built using FastAPI for the
 
 Watch the demo of the Airtel chatbot in action:
 
-[![Watch the Demo](https://img.youtube.com/vi/dQw4w9WgXcQ/0.jpg)](https://raw.githubusercontent.com/AnandPTi/TeraBotAirtel/1792d288b97e049e0fcc41f6e4b2e2eca29b3f1e/Demo.webm)
+[Download Demo Video](https://raw.githubusercontent.com/AnandPTi/TeraBotAirtel/1792d288b97e049e0fcc41f6e4b2e2eca29b3f1e/Demo.webm)
 
 
-
-Replace <VIDEO_ID> with the actual ID from your video URL if you're using a thumbnail link.
 ## Table of Contents
 
 - [Features](#features)
@@ -23,6 +21,8 @@ Replace <VIDEO_ID> with the actual ID from your video URL if you're using a thum
 - [Requirements](#requirements)
 - [Contributing](#contributing)
 - [License](#license)
+
+
 
 ## Features
 
@@ -39,8 +39,8 @@ To set up the project locally, follow these steps:
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository-url>
-   cd <project-directory>
+   git clone https://github.com/AnandPTi/TeraBotAirtel.git
+   cd TeraBotAirtel
    ```
 
 2. **Set up the environment:**
