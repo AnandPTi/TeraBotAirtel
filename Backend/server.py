@@ -30,7 +30,9 @@ recharge_plans = {
     "standard": "Standard Plan: 399 INR for 56 days, 1.5GB data per day, unlimited calls",
     "premium": "Premium Plan: 799 INR for 84 days, 2GB data per day, unlimited calls"
 }
-
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the Airtel chatbot API!"}
 @app.post("/chat")
 async def chat(request: ChatRequest,response:Response):
     response.headers['Access-Control-Allow-Origin'] = "https://tera-bot-airtel-virid.vercel.app"
