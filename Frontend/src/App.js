@@ -17,6 +17,7 @@ function App() {
 
     try {
       const response = await fetch('https://terabotairtel.onrender.com/chat', {
+        // const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

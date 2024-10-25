@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request , Response
 from pydantic import BaseModel
 from typing import Dict
 from chatbot import get_bot_response  # Importing the bot response function
@@ -16,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers (Authorization, etc.)
 )
 
+
 # Dummy database to hold session data
 session_data: Dict[str, Dict] = {}
 
@@ -31,7 +32,9 @@ recharge_plans = {
 }
 
 @app.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest,response:Response):
+    response.headers['Access-Control-Allow-Origin'] = "https://tera-bot-airtel-virid.vercel.app"
+    # response.headers['Access-Control-Allow-Origin'] = "http://localhost:3000"
     user_id = request.user_id
 
     # Check if user exists in the session data, if not, initialize them
